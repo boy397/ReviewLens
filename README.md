@@ -1,75 +1,139 @@
-# 🔍 ReviewLens
+<div align="center">
 
-### AI-Powered Product Review Analysis & RAG Engine
+<img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Magnifying%20Glass%20Tilted%20Right.png" alt="Magnifying Glass" width="90" height="90" />
 
-ReviewLens is a next-generation SaaS platform and Chrome extension designed to transform how users perceive product feedback. By utilizing **RAG (Retrieval-Augmented Generation)** with **FAISS**, ReviewLens allows you to semantically search through thousands of reviews and get instant, AI-generated summaries of pros, cons, and overall sentiment.
+# ✨ ReviewLens ✨
+
+**AI-Powered Product Review Analysis & RAG Engine**
+
+[![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![FAISS](https://img.shields.io/badge/FAISS-Vector_Search-4285F4?style=for-the-badge)](https://github.com/facebookresearch/faiss)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+
+*Turn thousands of noisy reviews into instant, actionable insights with Semantic Search and AI Summarization.*
+
+[Features](#-key-features) • [Tech Stack](#%EF%B8%8F-tech-stack) • [Quick Start](#-quick-start) • [Architecture](#-architecture)
+
+</div>
+
+---
+
+## 🌟 Why ReviewLens?
+
+Shopping online is overwhelming. Digging through thousands of reviews to figure out if a product's battery actually lasts or if the seller is legitimate takes hours. 
+
+**ReviewLens** solves this. With an elegant Next.js dashboard, a FastAPI AI brain, and a seamless Chrome Extension, ReviewLens reads the reviews for you. It extracts pros and cons, detects fake reviews, analyzes sentiment by feature, and even lets you chat with the reviews using our **RAG** (Retrieval-Augmented Generation) engine.
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Star-Struck.png" alt="Star Struck" width="40" height="40" />
+</div>
 
 ---
 
 ## ✨ Key Features
 
-- **🧠 Semantic RAG Search**: Ask natural language questions like *"How is the battery life after a year?"* or *"Is the screen good for gaming?"* and get contextual answers extracted from thousands of reviews using **FAISS** and **sentence-transformers**.
-- **📊 AI-Powered Sentiment Analysis**: Real-time polarity and subjectivity scoring for every product and category.
-- **🚀 Dynamic Aspect Extraction**: Automatically identifies key product features (Battery, Performance, Design) and analyzes sentiment for each.
-- **🚩 Fake Review Detection**: Heuristic-based flags for suspicious review patterns, generic phrasing, and rating outliers.
-- **🔌 Chrome Extension**: A companion tool that detects product pages on Amazon/Flipkart and provides instant AI summaries without leaving the page.
-- **💎 Premium Dashboard**: A stunning, high-performance Next.js dashboard featuring glassmorphism, dark mode, and interactive data visualizations.
+### 🧠 Semantic RAG Search
+Stop guessing keywords. Ask natural questions like *"How is the battery life after a year?"* or *"Is the screen good for gaming?"* Our FAISS-powered vector search finds the exact context across thousands of reviews and generates a precise answer using Groq LLM.
+
+### 🔗 "Analyze By URL" Intelligence
+Just paste any **Amazon** or **Flipkart** URL. ReviewLens seamlessly scrapes the product page, analyzes the extracted reviews, and generates a beautiful dashboard of insights. If a site uses heavy JavaScript blocking, the backend fails over gracefully to smart LLM-based product heuristics.
+
+### 📊 Aspect-Based Sentiment Analysis
+Don't just look at the average rating. ReviewLens automatically identifies key product features (e.g., *Battery, Performance, Display*) and rates the sentiment specifically for those features.
+
+### 🚩 Fake Review Detection
+Shop safely. Our heuristic engine flags suspicious review patterns, generic phrasing, and massive sentiment outliers.
+
+### 🔌 1-Click Chrome Extension
+A companion tool that detects product pages on eCommerce sites. Click the floating magic button to instantly jump to a deep-dive analysis of that exact product.
 
 ---
 
 ## 🛠️ Tech Stack
 
-### Backend (The Brain)
-- **FastAPI**: High-performance Python web framework.
-- **FAISS**: Meta's industry-leading library for efficient similarity search.
-- **Groq LLM**: Lightning-fast inference for review summarization and RAG query answering.
-- **Sentence-Transformers**: Used for generating high-quality vector embeddings.
-- **Pandas & TextBlob**: Core data processing and NLP sentiment analysis.
+<div align="center">
 
-### Frontend (The Interface)
-- **Next.js 14**: Modern React framework with App Router.
-- **TypeScript**: Type-safe development for robust UI logic.
-- **Tailwind CSS**: Utility-first styling with custom glassmorphism design system.
-- **Chart.js**: Dynamic and interactive data visualizations.
+| Section | Technologies |
+| :---: | :--- |
+| **Backend (The Brain)** | 🐍 FastAPI, 🔍 FAISS, 🧠 Groq LLM, 📊 Sentence-Transformers, 📝 TextBlob, 🐼 Pandas |
+| **Frontend (The UI)** | ⚡ Next.js 14, 📘 TypeScript, 🎨 Tailwind CSS, 📈 Chart.js |
+| **Extension (The Bridge)** | 🧩 Manifest V3, 📜 Vanilla JS (Service Workers & Content Scripts) |
+
+</div>
 
 ---
 
 ## 🚀 Quick Start
 
-### 1. Backend Setup
+Get ReviewLens running locally in minutes.
+
+### 1️⃣ Clone & Backend Setup
 ```bash
+git clone https://github.com/yourusername/ReviewLens.git
+cd ReviewLens
+
+# Install Python dependencies in the root environment
+pip install -r backend/requirements.txt
+
+# Create your .env file
+echo "GROQ_API_KEY=your_api_key_here" > backend/.env
+
+# Start the AI Backend
 cd backend
-pip install -r requirements.txt
-# Add your GROQ_API_KEY to .env
 python -m uvicorn main:app --reload --port 8000
 ```
+*The API will be live at `http://localhost:8000`*
 
-### 2. Frontend Setup
+### 2️⃣ Frontend Setup
 ```bash
-cd frontend
+# Open a new terminal
+cd ReviewLens/frontend
+
+# Install dependencies
 npm install
+
+# Start the stunning Next.js UI
 npm run dev
 ```
+*The Dashboard will be live at `http://localhost:3000`*
 
-### 3. Extension Setup
-1. Open Chrome and go to `chrome://extensions`.
-2. Enable **Developer Mode**.
-3. Click **Load Unpacked** and select the `chrome-extension` folder.
+### 3️⃣ Chrome Extension Install
+1. Open Chrome and navigate to `chrome://extensions/`
+2. Toggle on **Developer mode** in the top right corner.
+3. Click **Load unpacked** and select the `/chrome-extension` directory from the cloned repo.
+4. Open an Amazon/Flipkart product page to see the magic widget!
 
 ---
 
-## 📂 Project Structure
+## 📂 Project Architecture
 
 ```text
-├── backend/            # FastAPI + FAISS + Groq integration
-├── frontend/           # Next.js + TypeScript dashboard
-├── chrome-extension/   # MV3 Extension with Content Scripts
-└── synthetic_reviews_15k.csv # Core product review dataset
+ReviewLens/
+├── 🧠 backend/ 
+│   ├── routes/          # Fast API endpoints (/analyze-url, /rag)
+│   ├── services/        # AI, FAISS, Scraping, LLM orchestrators
+│   └── models/          # Pydantic validation schemas
+│
+├── 💻 frontend/ 
+│   ├── app/             # Next.js 14 App Router (Dashboard, Analyze)
+│   ├── components/      # Sleek, glassmorphism UI parts
+│   └── lib/             # API clients & TypeScript definition types
+│
+├── 🧩 chrome-extension/ # MV3 Service Workers & Content injection
+│
+└── 📄 README.md         # You are here!
 ```
 
 ---
 
-## 🛡️ License
-Distributed under the MIT License. See `LICENSE` for more information.
+<div align="center">
 
-Built with 💜 by ReviewLens Team
+<img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Hand%20gestures/Waving%20Hand.png" alt="Waving Hand" width="45" height="45" />
+
+### Built with 💜 by the ReviewLens Team
+
+*Transforming eCommerce, one review at a time.*
+
+</div>
