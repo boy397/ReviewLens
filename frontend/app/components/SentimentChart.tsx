@@ -19,10 +19,9 @@ interface SentimentChartProps {
 }
 
 export default function SentimentChart({ ratingDistribution, overallSentiment }: SentimentChartProps) {
-  // Rating distribution bar chart
   const labels = ["1 ★", "2 ★", "3 ★", "4 ★", "5 ★"];
   const dataValues = [1, 2, 3, 4, 5].map((r) => ratingDistribution[r] || 0);
-  const barColors = ["#ef4444", "#f97316", "#eab308", "#84cc16", "#22c55e"];
+  const barColors = ["#f87171", "#fb923c", "#fbbf24", "#a3e635", "#34d399"];
 
   const barData = {
     labels,
@@ -30,10 +29,11 @@ export default function SentimentChart({ ratingDistribution, overallSentiment }:
       {
         label: "Reviews",
         data: dataValues,
-        backgroundColor: barColors.map((c) => c + "aa"),
+        backgroundColor: barColors.map((c) => c + "99"),
         borderColor: barColors,
         borderWidth: 1,
         borderRadius: 6,
+        borderSkipped: false,
       },
     ],
   };
@@ -44,10 +44,10 @@ export default function SentimentChart({ ratingDistribution, overallSentiment }:
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: "rgba(17,17,24,0.95)",
-        titleColor: "#f0f0f5",
-        bodyColor: "#8b8b9e",
-        borderColor: "rgba(255,255,255,0.08)",
+        backgroundColor: "rgba(5,5,8,0.95)",
+        titleColor: "#eeeef2",
+        bodyColor: "#94949e",
+        borderColor: "rgba(255,255,255,0.06)",
         borderWidth: 1,
         cornerRadius: 10,
         padding: 12,
@@ -55,25 +55,22 @@ export default function SentimentChart({ ratingDistribution, overallSentiment }:
     },
     scales: {
       x: {
-        ticks: { color: "#5a5a6e", font: { size: 12 } },
+        ticks: { color: "#4e4e5e", font: { size: 12, weight: 500 as const } },
         grid: { display: false },
         border: { display: false },
       },
       y: {
-        ticks: { color: "#5a5a6e", font: { size: 11 } },
-        grid: { color: "rgba(255,255,255,0.04)" },
+        ticks: { color: "#4e4e5e", font: { size: 11 } },
+        grid: { color: "rgba(255,255,255,0.03)" },
         border: { display: false },
       },
     },
   };
 
-  // Sentiment doughnut
   const sentimentColor =
-    overallSentiment.label === "positive"
-      ? "#22c55e"
-      : overallSentiment.label === "negative"
-      ? "#ef4444"
-      : "#eab308";
+    overallSentiment.label === "positive" ? "#34d399"
+    : overallSentiment.label === "negative" ? "#f87171"
+    : "#fbbf24";
 
   const normalizedPolarity = (overallSentiment.polarity + 1) / 2;
 
@@ -82,9 +79,9 @@ export default function SentimentChart({ ratingDistribution, overallSentiment }:
     datasets: [
       {
         data: [normalizedPolarity * 100, (1 - normalizedPolarity) * 100],
-        backgroundColor: [sentimentColor + "cc", "rgba(255,255,255,0.05)"],
+        backgroundColor: [sentimentColor + "bb", "rgba(255,255,255,0.04)"],
         borderWidth: 0,
-        cutout: "78%",
+        cutout: "80%",
       },
     ],
   };
@@ -92,17 +89,14 @@ export default function SentimentChart({ ratingDistribution, overallSentiment }:
   const doughnutOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      tooltip: { enabled: false },
-    },
+    plugins: { legend: { display: false }, tooltip: { enabled: false } },
   };
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
       {/* Rating Distribution */}
-      <div className="glass-card" style={{ padding: 24 }}>
-        <h3 style={{ fontSize: "0.9rem", fontWeight: 600, color: "var(--text-secondary)", marginBottom: 16 }}>
+      <div className="glass-card-static" style={{ padding: 22 }}>
+        <h3 style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--text-muted)", marginBottom: 14, textTransform: "uppercase", letterSpacing: "0.06em" }}>
           Rating Distribution
         </h3>
         <div style={{ height: 200 }}>
@@ -111,27 +105,25 @@ export default function SentimentChart({ ratingDistribution, overallSentiment }:
       </div>
 
       {/* Sentiment Gauge */}
-      <div className="glass-card" style={{ padding: 24, display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <h3 style={{ fontSize: "0.9rem", fontWeight: 600, color: "var(--text-secondary)", marginBottom: 16, alignSelf: "flex-start" }}>
+      <div className="glass-card-static" style={{ padding: 22, display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <h3 style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--text-muted)", marginBottom: 14, alignSelf: "flex-start", textTransform: "uppercase", letterSpacing: "0.06em" }}>
           Overall Sentiment
         </h3>
-        <div style={{ position: "relative", width: 160, height: 160 }}>
+        <div style={{ position: "relative", width: 150, height: 150, margin: "auto 0" }}>
           <Doughnut data={doughnutData} options={doughnutOptions} />
           <div
             style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              textAlign: "center",
+              position: "absolute", top: "50%", left: "50%",
+              transform: "translate(-50%, -50%)", textAlign: "center",
             }}
           >
-            <div style={{ fontSize: "1.5rem", fontWeight: 800, color: sentimentColor }}>
+            <div style={{ fontSize: "1.4rem", fontWeight: 800, color: sentimentColor }}>
               {(overallSentiment.polarity * 100).toFixed(0)}%
             </div>
-            <div
-              style={{ fontSize: "0.7rem", fontWeight: 600, textTransform: "uppercase", color: "var(--text-muted)" }}
-            >
+            <div style={{
+              fontSize: "0.65rem", fontWeight: 600, textTransform: "uppercase",
+              color: "var(--text-muted)", letterSpacing: "0.06em",
+            }}>
               {overallSentiment.label}
             </div>
           </div>
