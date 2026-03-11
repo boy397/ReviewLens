@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ReviewLens</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">
+        <span class="logo-icon">🔍</span>
+        <span class="logo-text">ReviewLens</span>
+      </div>
+      <span class="badge" id="status-badge">Ready</span>
+    </div>
+
+    <!-- URL Input -->
+    <div class="input-group">
+      <input type="text" id="url-input" placeholder="Paste product URL or auto-detect..." />
+      <button id="analyze-btn" class="btn-primary">Analyze</button>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading" class="loading hidden">
+      <div class="spinner"></div>
+      <p>Analyzing reviews with AI...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="error" class="error hidden">
+      <span class="error-icon">⚠️</span>
+      <p id="error-msg"></p>
+    </div>
+
+    <!-- Results -->
+    <div id="results" class="results hidden">
+      <!-- Recommendation -->
+      <div class="recommendation" id="recommendation"></div>
+
+      <!-- Quick Stats -->
+      <div class="stats-row">
+        <div class="stat">
+          <span class="stat-value" id="avg-rating">—</span>
+          <span class="stat-label">Rating</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="review-count">—</span>
+          <span class="stat-label">Reviews</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="sentiment">—</span>
+          <span class="stat-label">Sentiment</span>
+        </div>
+      </div>
+
+      <!-- Pros -->
+      <div class="section">
+        <h3 class="section-title">👍 Pros</h3>
+        <div id="pros-list" class="list"></div>
+      </div>
+
+      <!-- Cons -->
+      <div class="section">
+        <h3 class="section-title">👎 Cons</h3>
+        <div id="cons-list" class="list"></div>
+      </div>
+
+      <!-- AI Summary -->
+      <div class="section">
+        <h3 class="section-title">🧠 AI Summary</h3>
+        <p id="ai-summary" class="summary-text"></p>
+      </div>
+
+      <!-- Open Dashboard Link -->
+      <a id="dashboard-link" class="dashboard-link" href="#" target="_blank">
+        View Full Analysis →
+      </a>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
