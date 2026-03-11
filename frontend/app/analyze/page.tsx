@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { api } from "../lib/api";
 import { AnalysisResult } from "../lib/types";
 import SentimentChart from "../components/SentimentChart";
@@ -18,12 +19,21 @@ interface URLAnalysisResult extends AnalysisResult {
   source?: string;
 }
 
-export default function AnalyzePage() {
+function AnalyzeContent() {
+  const searchParams = useSearchParams();
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<URLAnalysisResult | null>(null);
   const [error, setError] = useState("");
   const [step, setStep] = useState("");
+
+  // Auto-fill URL from query param (used by Chrome extension)
+  useEffect(() => {
+    const urlParam = searchParams.get("url");
+    if (urlParam) {
+      setUrl(urlParam);
+    }
+  }, [searchParams]);
 
   const exampleUrls = [
     { label: "Amazon iPhone Case", url: "https://www.amazon.in/dp/B0DQM4QC5R" },
@@ -339,5 +349,17 @@ export default function AnalyzePage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function AnalyzePage() {
+  return (
+    <Suspense fallback={
+      <div style={{ paddingTop: 88, maxWidth: 1200, margin: "0 auto", padding: "88px 24px 60px", textAlign: "center" }}>
+        <div className="skeleton" style={{ height: 200, borderRadius: 14 }} />
+      </div>
+    }>
+      <AnalyzeContent />
+    </Suspense>
   );
 }
