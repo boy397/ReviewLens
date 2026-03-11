@@ -295,6 +295,130 @@ Provide a concise, helpful answer based on the review data above."""
         except Exception as e:
             return f"Found {len(retrieved_reviews)} relevant reviews. Error calling Groq: {str(e)}"
 
+    # ── URL-Based LLM Analysis (Fallback) ──────────────────────
+    @staticmethod
+    async def generate_url_analysis(
+        url: str, product_title: str, platform: str,
+        page_rating: float = 0, rating_count: str = "", price: str = ""
+    ) -> dict:
+        """
+        Generate a full product analysis using Groq LLM when we can't scrape reviews.
+        Uses the product title, platform, rating, price as context.
+        """
+        from config import settings
+        import json as _json
+
+        # Build context
+        context_parts = [f"Product: {product_title}"]
+        if platform:
+            context_parts.append(f"Platform: {platform.capitalize()}")
+        if price:
+            context_parts.append(f"Price: {price}")
+        if page_rating:
+            context_parts.append(f"Rating: {page_rating}/5")
+        if rating_count:
+            context_parts.append(f"Reviews: {rating_count}")
+        context_parts.append(f"URL: {url}")
+        context = "\n".join(context_parts)
+
+        prompt = f"""You are a product review analyst. Analyze this product based on its details and your knowledge.
+
+{context}
+
+Respond ONLY with a valid JSON object (no markdown, no code fences) with this exact structure:
+{{
+  "ai_summary": "A detailed 3-4 sentence analysis of this product based on typical user feedback.",
+  "overall_sentiment": {{"polarity": 0.3, "subjectivity": 0.5, "label": "positive"}},
+  "aspects": [
+    {{"aspect": "battery", "count": 10, "avg_sentiment": 0.4}},
+    {{"aspect": "performance", "count": 8, "avg_sentiment": 0.3}}
+  ],
+  "pros": [
+    {{"text": "good battery life", "frequency": 5, "sentiment_score": 0.6}}
+  ],
+  "cons": [
+    {{"text": "heats up sometimes", "frequency": 3, "sentiment_score": -0.4}}
+  ],
+  "recommendation": "A one-line purchase recommendation.",
+  "avg_rating": {page_rating or 4.0},
+  "rating_distribution": {{"5": 40, "4": 25, "3": 15, "2": 10, "1": 10}}
+}}
+
+Be realistic with sentiment scores (-1 to 1), provide 3-6 aspects, 3-5 pros, 2-4 cons.
+Use the product name and category to give relevant, specific analysis."""
+
+        if not settings.GROQ_API_KEY:
+            return {
+                "ai_summary": f"Analysis for {product_title}: Unable to generate AI analysis without API key. Please configure GROQ_API_KEY in .env.",
+                "overall_sentiment": {"polarity": 0, "subjectivity": 0, "label": "neutral"},
+                "aspects": [],
+                "pros": [],
+                "cons": [],
+                "recommendation": "Configure GROQ_API_KEY for AI-powered analysis.",
+                "avg_rating": page_rating,
+                "rating_distribution": {},
+            }
+
+        try:
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                response = await client.post(
+                    "https://api.groq.com/openai/v1/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {settings.GROQ_API_KEY}",
+                        "Content-Type": "application/json",
+                    },
+                    json={
+                        "model": "llama-3.3-70b-versatile",
+                        "messages": [
+                            {"role": "system", "content": "You are a product analysis AI. You must respond with ONLY valid JSON, no markdown formatting."},
+                            {"role": "user", "content": prompt},
+                        ],
+                        "temperature": 0.4,
+                        "max_tokens": 800,
+                    },
+                )
+
+                if response.status_code == 200:
+                    content = response.json()["choices"][0]["message"]["content"]
+                    # Clean any markdown fences
+                    content = content.strip()
+                    if content.startswith("```"):
+                        content = "\n".join(content.split("\n")[1:])
+                    if content.endswith("```"):
+                        content = "\n".join(content.split("\n")[:-1])
+                    content = content.strip()
+
+                    try:
+                        data = _json.loads(content)
+                        return data
+                    except _json.JSONDecodeError:
+                        print(f"  LLM returned invalid JSON, using raw text as summary")
+                        return {
+                            "ai_summary": content[:500],
+                            "overall_sentiment": {"polarity": 0.2, "subjectivity": 0.5, "label": "positive" if page_rating >= 3.5 else "neutral"},
+                            "aspects": [],
+                            "pros": [],
+                            "cons": [],
+                            "recommendation": "See AI summary for details.",
+                            "avg_rating": page_rating,
+                            "rating_distribution": {},
+                        }
+                else:
+                    print(f"  Groq API error {response.status_code}")
+        except Exception as e:
+            print(f"  Groq API exception: {e}")
+
+        return {
+            "ai_summary": f"Analysis for {product_title} on {platform.capitalize()}: This product has a {page_rating}/5 rating. For a detailed AI analysis, ensure GROQ_API_KEY is configured correctly.",
+            "overall_sentiment": {"polarity": 0.2, "subjectivity": 0.5, "label": "positive" if page_rating >= 3.5 else "neutral"},
+            "aspects": [],
+            "pros": [],
+            "cons": [],
+            "recommendation": "Unable to generate full recommendation.",
+            "avg_rating": page_rating,
+            "rating_distribution": {},
+        }
+
 
 # Singleton
 ai_analysis_service = AIAnalysisService()
