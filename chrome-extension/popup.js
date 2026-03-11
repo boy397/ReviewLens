@@ -111,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Dashboard link
     const dashLink = document.getElementById("dashboard-link");
-    dashLink.href = `http://localhost:3000/product/${data.product_id}`;
+    dashLink.href = `http://localhost:3000/analyze?url=${encodeURIComponent(urlInput.value)}`;
   }
 
   function capitalize(s) {
